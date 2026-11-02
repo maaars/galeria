@@ -65,7 +65,7 @@ button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2p
 main { padding-block: 22px 56px; }
 section.panel { display: flex; flex-direction: column; gap: 24px; }
 h2 { font-size: 12.5px; font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
-h3 { font-size: 18px; margin: 0 0 2px; font-weight: 650; letter-spacing: -0.01em; }
+h3 { font-size: 18px; line-height: 1.25; margin: 0 0 4px; font-weight: 650; letter-spacing: -0.01em; text-wrap: balance; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
 .muted { color: var(--muted); }
 .note { color: var(--ink-2); font-size: 13.5px; }
@@ -89,31 +89,23 @@ h3 { font-size: 18px; margin: 0 0 2px; font-weight: 650; letter-spacing: -0.01em
   .link .ar { transform: rotate(90deg); }
 }
 
-/* selector de modelo */
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
-.seg button { background: none; border: 0; padding: 9px 14px; font: 600 14px/1 var(--font-body); color: var(--ink-2); cursor: pointer; }
-.seg button + button { border-left: 1px solid var(--line); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
-
 /* tabla */
 .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
 th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
 th:first-child, td:first-child { text-align: left; color: var(--muted); font-family: var(--font-mono); font-size: 13px; }
 thead th { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.25; white-space: normal; vertical-align: bottom; background: var(--soft); }
-thead th small { display: block; font-family: var(--font-mono); font-weight: 400; color: var(--ink-2); }
+thead th small { display: block; font-family: var(--font-body); font-size: 12px; font-weight: 400; color: var(--ink-2); margin-top: 2px; }
+thead th .v { font-family: var(--font-mono); font-size: 14px; font-weight: 500; }
+thead th:not(:first-child) { min-width: 150px; }
+@media (max-width: 480px) { th, td { padding: 8px 8px; } thead th:not(:first-child) { min-width: 88px; } }
 tbody tr:last-child td { border-bottom: 0; }
 tbody td { font-family: var(--font-mono); font-size: 14px; }
 tbody td:first-child { font-size: 13px; }
 
 /* modelos */
 .model-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
-.eq { font-family: var(--font-mono); font-size: 15px; line-height: 1.5; background: var(--soft); color: var(--ink); border-radius: 8px; padding: 10px 12px; overflow-x: auto; white-space: nowrap; margin-bottom: 8px; }
-.facts { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-bottom: 12px; font-size: 13.5px; color: var(--ink-2); }
-.facts b { color: var(--ink); font-family: var(--font-mono); font-weight: 500; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
-.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--s1); margin-right: 6px; }
-.legend .ln { display: inline-block; width: 18px; height: 3px; border-radius: 2px; background: var(--s2); margin-right: 6px; vertical-align: middle; }
+.eq { font-family: var(--font-mono); font-size: 15px; line-height: 1.5; background: var(--soft); color: var(--ink); border-radius: 8px; padding: 10px 12px; overflow-x: auto; margin-bottom: 14px; }
 .chart { position: relative; width: 100%; }
 .chart svg { display: block; }
 .chart text { fill: var(--muted); font: 11.5px var(--font-mono); }
@@ -146,11 +138,11 @@ footer { color: var(--muted); font-size: 12.5px; }
   <div>
     <h2>Variables</h2>
     <div class="chain">
-      <div class="node n1"><div class="sym">x</div><div class="nm">Número total de fotos y videos</div><div class="un">unidades</div></div>
+      <div class="node n1"><div class="sym">x</div><div class="nm">Número total de fotos y videos almacenados en el celular</div><div class="un">(unidades)</div></div>
       <div class="link"><b>y(x)</b><span class="ar">→</span></div>
-      <div class="node n2"><div class="sym">y</div><div class="nm">Espacio ocupado por la galería</div><div class="un">GB</div></div>
+      <div class="node n2"><div class="sym">y</div><div class="nm">Espacio ocupado por la galería del celular</div><div class="un">(GB)</div></div>
       <div class="link"><b>z(y)</b><span class="ar">→</span></div>
-      <div class="node n3"><div class="sym">z</div><div class="nm">Espacio total usado del almacenamiento interno</div><div class="un">GB</div></div>
+      <div class="node n3"><div class="sym">z</div><div class="nm">Espacio total usado del almacenamiento interno del celular</div><div class="un">(GB)</div></div>
     </div>
   </div>
 
@@ -159,9 +151,9 @@ footer { color: var(--muted); font-size: 12.5px; }
     <div class="scroll"><table id="tbl">
       <thead><tr>
         <th>N.º</th>
-        <th>x<small>fotos y videos (unid.)</small></th>
-        <th>y<small>galería (GB)</small></th>
-        <th>z<small>total usado (GB)</small></th>
+        <th><span class="v">x</span><small>Número total de fotos y videos (unidades)</small></th>
+        <th><span class="v">y</span><small>Espacio ocupado por la galería (GB)</small></th>
+        <th><span class="v">z</span><small>Espacio total usado del almacenamiento interno (GB)</small></th>
       </tr></thead>
       <tbody></tbody>
     </table></div>
@@ -173,40 +165,26 @@ footer { color: var(--muted); font-size: 12.5px; }
   <div class="stack" id="models-body">
     <div class="card">
       <div class="model-head">
-        <div><h3>Galería según fotos y videos</h3><p class="muted">y(x), regresión polinómica</p></div>
-        <div class="seg" role="group" aria-label="Tipo de modelo para y(x)">
-          <button id="bt-lin" data-m="yx" data-k="lin" aria-pressed="true">Lineal</button>
-          <button id="bt-quad" data-m="yx" data-k="quad" aria-pressed="false">Cuadrática</button>
-        </div>
+        <div><h3>Espacio ocupado por la galería en el almacenamiento interno</h3></div>
       </div>
       <div class="eq" id="eq-yx"></div>
-      <div class="facts" id="facts-yx"></div>
-      <div class="legend"><span><i class="dot"></i>Observaciones</span><span><i class="ln"></i>Modelo y(x)</span></div>
       <div class="chart" id="ch-yx"></div>
     </div>
 
     <div class="card">
       <div class="model-head">
-        <div><h3>Almacenamiento total según galería</h3><p class="muted">z(y), regresión exponencial o logarítmica</p></div>
-        <div class="seg" role="group" aria-label="Tipo de modelo para z(y)">
-          <button id="bt-exp" data-m="zy" data-k="exp" aria-pressed="false">Exponencial</button>
-          <button id="bt-log" data-m="zy" data-k="log" aria-pressed="true">Logarítmica</button>
-        </div>
+        <div><h3>Espacio total usado del almacenamiento interno</h3></div>
       </div>
       <div class="eq" id="eq-zy"></div>
-      <div class="facts" id="facts-zy"></div>
-      <div class="legend"><span><i class="dot"></i>Observaciones</span><span><i class="ln"></i>Modelo z(y)</span></div>
       <div class="chart" id="ch-zy"></div>
     </div>
 
     <div class="card">
-      <div class="model-head"><div><h3>Función compuesta</h3><p class="muted">z(y(x)): almacenamiento total según fotos y videos</p></div></div>
+      <div class="model-head"><div><h3>Función compuesta: espacio total usado del almacenamiento interno</h3></div></div>
       <div class="eq" id="eq-zx"></div>
-      <div class="facts" id="facts-zx"></div>
-      <div class="legend"><span><i class="dot"></i>Observaciones (x, z)</span><span><i class="ln"></i>Modelo z(y(x))</span></div>
       <div class="chart" id="ch-zx"></div>
     </div>
-    <footer>Los ajustes los calcula Python (numpy) por mínimos cuadrados, igual que la línea de tendencia de Excel. El modelo exponencial se ajusta sobre ln(z) y su R² se calcula ahí, como hace Excel.</footer>
+    <footer>Los coeficientes los calcula Python (NumPy) por mínimos cuadrados, igual que la línea de tendencia de Excel. La función compuesta z(y(x)) se obtiene reemplazando y(x) dentro de z(y).</footer>
   </div>
 </section>
 
@@ -215,9 +193,8 @@ footer { color: var(--muted); font-size: 12.5px; }
 <script>
 let SURVEY = [];
 let FITS = null;
-let X = [], Y = [], Z = [], IDX = [];
+let X = [], Y = [], Z = [];
 let ready = false, my, mz, mc;
-const S = { yx: 'lin', zy: 'log' };
 
 /* ---------- utilidades ---------- */
 const $ = s => document.querySelector(s);
@@ -236,40 +213,17 @@ function fmt(v, s = 4) {
 }
 const sg = v => (v < 0 ? '−' : '+');
 const ab = Math.abs;
-const r3 = v => (Number.isFinite(v) ? v.toFixed(3) : '—');
-const pct = v => (Number.isFinite(v) ? (v * 100).toFixed(1) + ' %' : '—');
 
 /* ---------- modelos (los coeficientes los calcula Python) ---------- */
-// y(x): galería según fotos y videos
-function modelYX(kind) {
-  const p = FITS.yx[kind];
-  if (kind === 'lin') {
-    const { a, b } = p, f = x => a + b * x;
-    return { kind, f, expr: v => `${fmt(a)} ${sg(b)} ${fmt(ab(b))}·${v}`, r2: p.r2, domain: 'todo x' };
-  }
-  const { c0, c1, c2 } = p, f = x => c0 + c1 * x + c2 * x * x;
-  return { kind, f, expr: v => `${fmt(c2)}·${v}² ${sg(c1)} ${fmt(ab(c1))}·${v} ${sg(c0)} ${fmt(ab(c0))}`, r2: p.r2, domain: 'todo x' };
-}
-// z(y): almacenamiento total según galería
-function modelZY(kind) {
-  const p = FITS.zy[kind];
-  if (kind === 'exp') {
-    const { A, k } = p, f = y => A * Math.exp(k * y);
-    return {
-      kind, f, domain: 'todo y',
-      expr: (v, cx) => `${fmt(A)}·e^(${fmt(k)}·${cx ? '(' + v + ')' : v})`,
-      r2: p.r2, r2note: 'sobre ln(z)', r2real: p.r2_real
-    };
-  }
-  const { a, b } = p, f = y => (y > 0 ? a + b * Math.log(y) : NaN);
-  return { kind, f, domain: 'y > 0', expr: v => `${fmt(a)} ${sg(b)} ${fmt(ab(b))}·ln(${v})`, r2: p.r2 };
-}
+// y(x): regresión lineal         y = a + b·x
+// z(y): regresión logarítmica    z = a + b·ln(y)
+// z(y(x)): función compuesta     z = a₂ + b₂·ln(a₁ + b₁·x)
 function build() {
-  my = modelYX(S.yx); mz = modelZY(S.zy);
-  const f = x => mz.f(my.f(x));
-  mc = { f, r2: FITS.comp[S.yx + '_' + S.zy], eq: 'z(x) = ' + mz.expr(my.expr('x'), true) };
+  const { a: a1, b: b1 } = FITS.yx, { a: a2, b: b2 } = FITS.zy;
+  my = { f: x => a1 + b1 * x, expr: v => `${fmt(a1)} ${sg(b1)} ${fmt(ab(b1))}·${v}` };
+  mz = { f: y => (y > 0 ? a2 + b2 * Math.log(y) : NaN), expr: v => `${fmt(a2)} ${sg(b2)} ${fmt(ab(b2))}·ln(${v})` };
+  mc = { f: x => mz.f(my.f(x)), eq: 'z(y(x)) = ' + mz.expr(my.expr('x')) };
   X = SURVEY.map(r => r[0]); Y = SURVEY.map(r => r[1]); Z = SURVEY.map(r => r[2]);
-  IDX = SURVEY.map((_, i) => i);
   ready = true;
 }
 
@@ -283,14 +237,25 @@ function axis(dmax, n) {
   return { ticks, top };
 }
 const charts = {};
+// Parte un título largo en varias líneas para que quepa en pantallas angostas
+function wrapText(t, n) {
+  const out = []; let cur = '';
+  t.split(' ').forEach(w => {
+    if (cur && (cur + ' ' + w).length > n) { out.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w;
+  });
+  if (cur) out.push(cur);
+  return out;
+}
 function chart(id, o) { charts[id] = o; draw(id); }
 function draw(id) {
   const o = charts[id], host = document.getElementById(id);
   if (!o || !host) return;
   const w = host.clientWidth;
   if (!w) return;
-  const h = Math.round(Math.min(380, Math.max(250, w * 0.66)));
-  const m = { l: 54, r: 14, t: 12, b: 44 };
+  const cpl = Math.max(14, Math.floor((w - 12) / 6.6));   // caracteres por línea en los títulos
+  const xTit = wrapText(o.xt, cpl), yTit = wrapText(o.yt, cpl);
+  const m = { l: 54, r: 14, t: 14 + yTit.length * 16, b: 44 + (xTit.length - 1) * 15 };
+  const h = Math.round(Math.min(380, Math.max(250, w * 0.66))) + (m.t - 12) + (m.b - 44);
   const pw = w - m.l - m.r, ph = h - m.t - m.b;
   const ax = axis(Math.max(...o.xs), w < 480 ? 4 : 6), ay = axis(Math.max(...o.ys), 5);
   const sx = v => m.l + (v / ax.top) * pw, sy = v => m.t + ph - (v / ay.top) * ph;
@@ -309,8 +274,8 @@ function draw(id) {
   host.innerHTML = `<svg width="${w}" height="${h}" role="img" aria-label="${o.aria}">
     <defs><clipPath id="${cid}"><rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}"/></clipPath></defs>
     ${grid}<line class="base" x1="${m.l}" x2="${w - m.r}" y1="${m.t + ph}" y2="${m.t + ph}"/>${xl}
-    <text class="axis-title" x="${m.l + pw / 2}" y="${h - 6}" text-anchor="middle">${o.xt}</text>
-    <text class="axis-title" transform="translate(13 ${m.t + ph / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>
+    ${xTit.map((t, i) => `<text class="axis-title" x="${m.l + pw / 2}" y="${m.t + ph + 38 + i * 15}" text-anchor="middle">${t}</text>`).join('')}
+    ${yTit.map((t, i) => `<text class="axis-title" x="4" y="${16 + i * 16}">${t}</text>`).join('')}
     <path class="curve" clip-path="url(#${cid})" d="${d}"/>${pts}</svg><div class="tip" hidden></div>`;
   const tip = host.querySelector('.tip'), svg = host.querySelector('svg');
   const show = e => {
@@ -338,30 +303,28 @@ function renderTable() {
 }
 
 /* ---------- vista: modelos ---------- */
+const NOM_X = 'Número total de fotos y videos (unidades)';
+const NOM_Y = 'Espacio ocupado por la galería (GB)';
+const NOM_Z = 'Espacio total usado del almacenamiento interno (GB)';
 function renderModelos() {
   if (!ready) return;
-  document.querySelectorAll('.seg button[data-m]').forEach(b => b.setAttribute('aria-pressed', String(S[b.dataset.m] === b.dataset.k)));
   $('#eq-yx').textContent = 'y(x) = ' + my.expr('x');
   $('#eq-zy').textContent = 'z(y) = ' + mz.expr('y');
   $('#eq-zx').textContent = mc.eq;
-  $('#facts-yx').innerHTML = `<span>R² = <b>${r3(my.r2)}</b></span><span>explica <b>${pct(my.r2)}</b> de la variación</span><span>derivable en <b>${my.domain}</b></span>`;
-  $('#facts-zy').innerHTML = `<span>R² = <b>${r3(mz.r2)}</b>${mz.r2note ? ' ' + mz.r2note : ''}</span>${mz.r2real !== undefined ? `<span>R² en z real = <b>${r3(mz.r2real)}</b></span>` : `<span>explica <b>${pct(mz.r2)}</b> de la variación</span>`}<span>derivable en <b>${mz.domain}</b></span>`;
-  $('#facts-zx').innerHTML = `<span>R² en z real = <b>${r3(mc.r2)}</b></span><span>derivable cuando <b>y(x) &gt; 0</b></span>`;
-  const n = i => IDX[i] + 1;
   chart('ch-yx', {
-    xs: X, ys: Y, f: my.f, start: 0, xt: 'x · fotos y videos (unid.)', yt: 'y · galería (GB)',
-    aria: 'Dispersión de la galería contra la cantidad de fotos y videos, con la curva del modelo',
-    tip: i => `Obs. ${n(i)}<br>x = ${X[i]} unid.<br>y = ${Y[i].toFixed(2)} GB`
+    xs: X, ys: Y, f: my.f, start: 0, xt: 'x · ' + NOM_X, yt: 'y · ' + NOM_Y,
+    aria: 'Dispersión del espacio ocupado por la galería contra el número total de fotos y videos, con la recta del modelo',
+    tip: i => `Dato ${i + 1}<br>x = ${X[i]} unid.<br>y = ${Y[i].toFixed(2)} GB`
   });
   chart('ch-zy', {
-    xs: Y, ys: Z, f: mz.f, start: 0.05, xt: 'y · galería (GB)', yt: 'z · total usado (GB)',
-    aria: 'Dispersión del almacenamiento total usado contra el espacio de la galería, con la curva del modelo',
-    tip: i => `Obs. ${n(i)}<br>y = ${Y[i].toFixed(2)} GB<br>z = ${Z[i].toFixed(2)} GB`
+    xs: Y, ys: Z, f: mz.f, start: 0.05, xt: 'y · ' + NOM_Y, yt: 'z · ' + NOM_Z,
+    aria: 'Dispersión del espacio total usado contra el espacio ocupado por la galería, con la curva logarítmica',
+    tip: i => `Dato ${i + 1}<br>y = ${Y[i].toFixed(2)} GB<br>z = ${Z[i].toFixed(2)} GB`
   });
   chart('ch-zx', {
-    xs: X, ys: Z, f: mc.f, start: 0, xt: 'x · fotos y videos (unid.)', yt: 'z · total usado (GB)',
-    aria: 'Dispersión del almacenamiento total usado contra la cantidad de fotos y videos, con la curva compuesta',
-    tip: i => `Obs. ${n(i)}<br>x = ${X[i]} unid.<br>z = ${Z[i].toFixed(2)} GB`
+    xs: X, ys: Z, f: mc.f, start: 0, xt: 'x · ' + NOM_X, yt: 'z · ' + NOM_Z,
+    aria: 'Dispersión del espacio total usado contra el número total de fotos y videos, con la curva de la función compuesta',
+    tip: i => `Dato ${i + 1}<br>x = ${X[i]} unid.<br>z = ${Z[i].toFixed(2)} GB`
   });
 }
 
@@ -378,9 +341,6 @@ function showTab(id) {
 }
 document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => { location.hash = b.dataset.tab; }));
 window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
-document.querySelectorAll('.seg button[data-m]').forEach(b => b.addEventListener('click', () => {
-  S[b.dataset.m] = b.dataset.k; build(); renderModelos();
-}));
 
 async function iniciar() {
   try {

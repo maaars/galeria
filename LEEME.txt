@@ -46,15 +46,15 @@ QUÉ HAY EN LA CARPETA
 
 
 QUÉ CALCULA PYTHON (calculos.py)
-  y(x)    lineal y cuadrática        con np.polyfit (mínimos cuadrados)
-  z(y)    exponencial y logarítmica  (se ajustan como recta en ln z y en ln y)
-  z(y(x)) la compuesta de cada combinación, con su R²
-El R² del exponencial se calcula sobre ln(z), igual que Excel.
+  y(x)    regresión lineal         y = a + b·x       con np.polyfit (mínimos cuadrados)
+  z(y)    regresión logarítmica    z = a + b·ln(y)   (es una recta en ln y, también con np.polyfit)
+  z(y(x)) la función compuesta: se reemplaza y(x) dentro de z(y)
+          z(y(x)) = a₂ + b₂·ln(a₁ + b₁·x)
 
 VARIABLES
-  x = número total de fotos y videos (unidades)
-  y = espacio ocupado por la galería (GB)
-  z = espacio total usado del almacenamiento interno (GB)
+  x = número total de fotos y videos almacenados en el celular (unidades)
+  y = espacio ocupado por la galería del celular (GB)
+  z = espacio total usado del almacenamiento interno del celular (GB)
 
 
 PARA CAMBIAR LOS DATOS
