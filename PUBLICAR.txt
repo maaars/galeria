@@ -1,0 +1,52 @@
+PUBLICAR LA APP Y CREAR EL .EXE
+================================
+
+Todo se hace desde GitHub (gratis). Tiempo total: unos 15 minutos.
+
+
+PARTE A · SUBIR LA CARPETA A GITHUB
+ 1. Entra a github.com y crea una cuenta (si ya tienes, inicia sesión).
+ 2. Arriba a la derecha: "+"  >  "New repository".
+ 3. Nombre: galeria     Elige "Public"     Clic en "Create repository".
+ 4. En la página que sale, clic en el enlace "uploading an existing file".
+ 5. Descomprime el zip. Abre la carpeta galeria_app, selecciona TODO lo que hay
+    adentro (incluidas las carpetas web y .github) y arrástralo a la página.
+ 6. Espera a que termine de subir y clic en "Commit changes".
+
+ Si la carpeta ".github" no se subió (a veces las carpetas que empiezan con punto no
+ se arrastran), créala a mano:
+   "Add file"  >  "Create new file"  >  en el nombre escribe:
+        .github/workflows/crear-exe.yml
+   (al escribir las barras se crean las carpetas). Pega adentro el contenido del
+   archivo crear-exe.yml (en tu carpeta, dentro de .github > workflows; ábrelo con el Bloc de notas) y clic en "Commit changes".
+
+
+PARTE B · LINK PARA EL PROFESOR (STREAMLIT COMMUNITY CLOUD)
+ 1. Entra a share.streamlit.io  y elige "Continue with GitHub".
+ 2. Clic en "Create app"  >  "Deploy a public app from GitHub".
+ 3. Repository:      tu-usuario/galeria
+    Branch:          main
+    Main file path:  streamlit_app.py
+    App URL:         escribe el nombre que quieras, por ejemplo almacenamientocelular
+ 4. Clic en "Deploy" y espera unos minutos.
+ 5. Cuando abra, copia el link (algo como https://almacenamientocelular.streamlit.app).
+    Pruébalo en una ventana de incógnito, como si fueras el profesor.
+
+ Importante: si nadie abre la app por varios días, se "duerme". Al entrar aparece un
+ botón "Yes, get this app back up!": se toca y despierta en un minuto. Ábrela tú un rato
+ antes de que la revise el profesor.
+
+
+PARTE C · CREAR EL .EXE (WINDOWS)
+ GitHub lo construye solo, porque hace falta una computadora con Windows.
+ 1. En tu repositorio, pestaña "Actions".
+ 2. A la izquierda "Crear exe de Windows"  >  botón "Run workflow"  >  "Run workflow".
+    (También se ejecuta solo cada vez que subes archivos.)
+ 3. Espera de 3 a 6 minutos hasta que aparezca un check verde.
+ 4. Clic en esa ejecución. Abajo, en "Artifacts", descarga "Galeria-exe".
+ 5. Descomprime y tendrás  Galeria.exe . Doble clic y se abre la app.
+
+ - La primera vez Windows puede decir "Windows protegió su PC". Clic en "Más información"
+   y luego en "Ejecutar de todas formas". Pasa con cualquier programa sin firma digital.
+ - Descarga el .exe y guárdalo: GitHub borra los artifacts a los 90 días.
+ - Si la ejecución sale con una X roja, abre el error, copia el texto y pásaselo a Claude.

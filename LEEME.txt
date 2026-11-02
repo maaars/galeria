@@ -1,0 +1,61 @@
+ALMACENAMIENTO DEL CELULAR SEGÚN FOTOS Y VIDEOS  ·  EC4 Cálculo I
+=================================================================
+
+QUÉ ES
+Una app hecha en Python. Lee los 20 datos de la encuesta (datos.csv), calcula
+las regresiones con numpy y muestra los resultados en dos pestañas:
+Datos y Modelos. Hay dos versiones con la misma interfaz:
+
+  1) ESCRITORIO  (app.py)          una ventana en tu computadora
+  2) WEB         (streamlit_app.py) una página con link, para que el profe entre con un clic
+
+Para publicar la versión web y crear el .exe, lee PUBLICAR.txt.
+
+
+VERSIÓN DE ESCRITORIO
+Opción A (Windows): doble clic en  iniciar.bat
+  - La primera vez instala numpy y pywebview (necesita internet y Python 3.9 o más).
+  - Después ya no necesita internet.
+
+Opción B (Visual Studio Code):
+  1. Abre esta carpeta en VS Code (Archivo > Abrir carpeta).
+  2. En la terminal:   pip install numpy pywebview
+  3. Ejecuta:          python app.py      (en Mac o Linux: python3 app.py)
+
+Si no se puede abrir la ventana propia, la app se abre sola en el navegador
+(dirección 127.0.0.1, solo en tu computadora). Para forzarlo:  python app.py --navegador
+
+
+VERSIÓN WEB (STREAMLIT) EN TU COMPUTADORA
+  pip install streamlit numpy
+  streamlit run streamlit_app.py
+
+
+QUÉ HAY EN LA CARPETA
+  calculos.py          Lee datos.csv y hace las regresiones (numpy). Lo usan las dos versiones.
+  app.py               Versión de escritorio: abre la ventana.
+  streamlit_app.py     Versión web con Streamlit.
+  datos.csv            Los 20 datos de la encuesta (x, y, z). Se abre con Excel.
+  web/index.html       La interfaz (lo que se ve en pantalla). Recibe los números de Python.
+  web/fonts/           Letras de la app, para que se vea igual sin internet.
+  iniciar.bat          Doble clic para abrir la versión de escritorio en Windows.
+  requirements.txt     Librerías de la versión web (para Streamlit Cloud).
+  requirements-escritorio.txt   Librerías de la versión de escritorio.
+  .github/workflows/   Instrucciones para que GitHub cree el .exe (ver PUBLICAR.txt).
+  PUBLICAR.txt         Guía paso a paso.
+
+
+QUÉ CALCULA PYTHON (calculos.py)
+  y(x)    lineal y cuadrática        con np.polyfit (mínimos cuadrados)
+  z(y)    exponencial y logarítmica  (se ajustan como recta en ln z y en ln y)
+  z(y(x)) la compuesta de cada combinación, con su R²
+El R² del exponencial se calcula sobre ln(z), igual que Excel.
+
+VARIABLES
+  x = número total de fotos y videos (unidades)
+  y = espacio ocupado por la galería (GB)
+  z = espacio total usado del almacenamiento interno (GB)
+
+
+PARA CAMBIAR LOS DATOS
+Edita datos.csv (columnas x, y, z; valores mayores que 0) y vuelve a abrir la app.

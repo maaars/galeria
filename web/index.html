@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Almacenamiento del celular según fotos y videos</title>
+<style>
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 400; font-style: normal; font-display: swap; src: url(fonts/schibsted-grotesk-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 500; font-style: normal; font-display: swap; src: url(fonts/schibsted-grotesk-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 600; font-style: normal; font-display: swap; src: url(fonts/schibsted-grotesk-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 700; font-style: normal; font-display: swap; src: url(fonts/schibsted-grotesk-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-style: normal; font-display: swap; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 500; font-style: normal; font-display: swap; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2"); }
+
+/* Layout: banda ciruela arriba, una columna de lectura, tarjetas para cada modelo. Paleta: #120B0E #2A141E #4A1F34 #A33B6A #F6D2E2 */
+:root {
+  color-scheme: light;
+  --bg: #fcf1f6;
+  --surface: #ffffff;
+  --soft: #f8dfeb;
+  --ink: #2a141e;
+  --ink-2: #5b3a4b;
+  --muted: #85616f;
+  --line: #efcfdd;
+  --accent: #a33b6a;
+  --accent-text: #a33b6a;
+  --on-accent: #fff7fa;
+  --band: #4a1f34;
+  --band-ink: #f6d2e2;
+  --band-ink-2: #d9a9c0;
+  --s1: #a33b6a;
+  --s2: #c98500;
+  --font-body: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #120b0e; --surface: #2a141e; --soft: #4a1f34; --ink: #f6d2e2; --ink-2: #d2aabd; --muted: #a98a9b;
+    --line: #3d1a2b; --accent-text: #f08ab5; --s1: #d55181; --s2: #c98500; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #120b0e; --surface: #2a141e; --soft: #4a1f34; --ink: #f6d2e2; --ink-2: #d2aabd; --muted: #a98a9b;
+  --line: #3d1a2b; --accent-text: #f08ab5; --s1: #d55181; --s2: #c98500; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--band); }
+.wrap { max-width: 920px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+p { margin: 0; }
+
+.band { background: var(--band); border-bottom: 4px solid var(--accent); }
+.band .wrap { padding-block: 26px 22px; }
+h1 { font-size: clamp(25px, 6.4vw, 36px); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; color: var(--band-ink); text-wrap: balance; }
+.sub { color: var(--band-ink-2); max-width: 60ch; }
+
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+nav.tabs .wrap { display: flex; gap: 4px; }
+nav.tabs button { flex: 1 1 0; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); font: 600 15px/1 var(--font-body); padding: 14px 8px 12px; cursor: pointer; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent-text); }
+button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+
+main { padding-block: 22px 56px; }
+section.panel { display: flex; flex-direction: column; gap: 24px; }
+h2 { font-size: 12.5px; font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h3 { font-size: 18px; margin: 0 0 2px; font-weight: 650; letter-spacing: -0.01em; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.muted { color: var(--muted); }
+.note { color: var(--ink-2); font-size: 13.5px; }
+.warn { color: var(--s2); font-weight: 600; }
+.stack { display: flex; flex-direction: column; gap: 24px; }
+
+/* cadena de variables: de oscuro a claro, como la acumulación */
+.chain { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; align-items: stretch; }
+.node { border-radius: 12px; padding: 14px; min-width: 0; border: 1px solid rgba(163, 59, 106, 0.4); display: flex; flex-direction: column; gap: 2px; }
+.node.n1 { background: #4a1f34; color: #f6d2e2; }
+.node.n2 { background: #a33b6a; color: #fff7fa; }
+.node.n3 { background: #f6d2e2; color: #2a141e; }
+.node .sym { font-family: var(--font-mono); font-size: 22px; font-weight: 500; line-height: 1.2; }
+.node .nm { font-weight: 600; line-height: 1.25; }
+.node .un { font-size: 13px; opacity: 0.8; }
+.link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 13px; color: var(--muted); gap: 2px; }
+.link b { font-weight: 500; color: var(--ink); }
+@media (max-width: 640px) {
+  .chain { grid-template-columns: 1fr; }
+  .link { flex-direction: row; gap: 8px; }
+  .link .ar { transform: rotate(90deg); }
+}
+
+/* selector de modelo */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { background: none; border: 0; padding: 9px 14px; font: 600 14px/1 var(--font-body); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+/* tabla */
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+th:first-child, td:first-child { text-align: left; color: var(--muted); font-family: var(--font-mono); font-size: 13px; }
+thead th { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.25; white-space: normal; vertical-align: bottom; background: var(--soft); }
+thead th small { display: block; font-family: var(--font-mono); font-weight: 400; color: var(--ink-2); }
+tbody tr:last-child td { border-bottom: 0; }
+tbody td { font-family: var(--font-mono); font-size: 14px; }
+tbody td:first-child { font-size: 13px; }
+
+/* modelos */
+.model-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+.eq { font-family: var(--font-mono); font-size: 15px; line-height: 1.5; background: var(--soft); color: var(--ink); border-radius: 8px; padding: 10px 12px; overflow-x: auto; white-space: nowrap; margin-bottom: 8px; }
+.facts { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-bottom: 12px; font-size: 13.5px; color: var(--ink-2); }
+.facts b { color: var(--ink); font-family: var(--font-mono); font-weight: 500; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--s1); margin-right: 6px; }
+.legend .ln { display: inline-block; width: 18px; height: 3px; border-radius: 2px; background: var(--s2); margin-right: 6px; vertical-align: middle; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; }
+.chart text { fill: var(--muted); font: 11.5px var(--font-mono); }
+.chart .axis-title { font: 12px var(--font-body); fill: var(--ink-2); }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .base { stroke: var(--muted); stroke-width: 1; }
+.chart .pt { fill: var(--s1); stroke: var(--surface); stroke-width: 2; }
+.chart .pt.on { stroke: var(--ink); }
+.chart .curve { fill: none; stroke: var(--s2); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); border-radius: 6px; padding: 6px 9px; font: 12px/1.35 var(--font-mono); white-space: nowrap; z-index: 3; transform: translate(-50%, -100%); }
+footer { color: var(--muted); font-size: 12.5px; }
+</style>
+</head>
+<body>
+
+<header class="band"><div class="wrap">
+  <h1>Almacenamiento del celular según fotos y videos</h1>
+  <p class="sub">Más fotos y videos, más GB en la galería y más memoria usada en el celular.</p>
+</div></header>
+
+<nav class="tabs" aria-label="Secciones"><div class="wrap" role="tablist">
+  <button role="tab" id="tab-datos" aria-controls="panel-datos" aria-selected="true" data-tab="datos">Datos</button>
+  <button role="tab" id="tab-modelos" aria-controls="panel-modelos" aria-selected="false" data-tab="modelos">Modelos</button>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ============ DATOS ============ -->
+<section class="panel" id="panel-datos" role="tabpanel" aria-labelledby="tab-datos">
+  <div>
+    <h2>Variables</h2>
+    <div class="chain">
+      <div class="node n1"><div class="sym">x</div><div class="nm">Número total de fotos y videos</div><div class="un">unidades</div></div>
+      <div class="link"><b>y(x)</b><span class="ar">→</span></div>
+      <div class="node n2"><div class="sym">y</div><div class="nm">Espacio ocupado por la galería</div><div class="un">GB</div></div>
+      <div class="link"><b>z(y)</b><span class="ar">→</span></div>
+      <div class="node n3"><div class="sym">z</div><div class="nm">Espacio total usado del almacenamiento interno</div><div class="un">GB</div></div>
+    </div>
+  </div>
+
+  <div>
+    <h2>Datos de la encuesta</h2>
+    <div class="scroll"><table id="tbl">
+      <thead><tr>
+        <th>N.º</th>
+        <th>x<small>fotos y videos (unid.)</small></th>
+        <th>y<small>galería (GB)</small></th>
+        <th>z<small>total usado (GB)</small></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============ MODELOS ============ -->
+<section class="panel" id="panel-modelos" role="tabpanel" aria-labelledby="tab-modelos" hidden>
+  <div class="stack" id="models-body">
+    <div class="card">
+      <div class="model-head">
+        <div><h3>Galería según fotos y videos</h3><p class="muted">y(x), regresión polinómica</p></div>
+        <div class="seg" role="group" aria-label="Tipo de modelo para y(x)">
+          <button id="bt-lin" data-m="yx" data-k="lin" aria-pressed="true">Lineal</button>
+          <button id="bt-quad" data-m="yx" data-k="quad" aria-pressed="false">Cuadrática</button>
+        </div>
+      </div>
+      <div class="eq" id="eq-yx"></div>
+      <div class="facts" id="facts-yx"></div>
+      <div class="legend"><span><i class="dot"></i>Observaciones</span><span><i class="ln"></i>Modelo y(x)</span></div>
+      <div class="chart" id="ch-yx"></div>
+    </div>
+
+    <div class="card">
+      <div class="model-head">
+        <div><h3>Almacenamiento total según galería</h3><p class="muted">z(y), regresión exponencial o logarítmica</p></div>
+        <div class="seg" role="group" aria-label="Tipo de modelo para z(y)">
+          <button id="bt-exp" data-m="zy" data-k="exp" aria-pressed="false">Exponencial</button>
+          <button id="bt-log" data-m="zy" data-k="log" aria-pressed="true">Logarítmica</button>
+        </div>
+      </div>
+      <div class="eq" id="eq-zy"></div>
+      <div class="facts" id="facts-zy"></div>
+      <div class="legend"><span><i class="dot"></i>Observaciones</span><span><i class="ln"></i>Modelo z(y)</span></div>
+      <div class="chart" id="ch-zy"></div>
+    </div>
+
+    <div class="card">
+      <div class="model-head"><div><h3>Función compuesta</h3><p class="muted">z(y(x)): almacenamiento total según fotos y videos</p></div></div>
+      <div class="eq" id="eq-zx"></div>
+      <div class="facts" id="facts-zx"></div>
+      <div class="legend"><span><i class="dot"></i>Observaciones (x, z)</span><span><i class="ln"></i>Modelo z(y(x))</span></div>
+      <div class="chart" id="ch-zx"></div>
+    </div>
+    <footer>Los ajustes los calcula Python (numpy) por mínimos cuadrados, igual que la línea de tendencia de Excel. El modelo exponencial se ajusta sobre ln(z) y su R² se calcula ahí, como hace Excel.</footer>
+  </div>
+</section>
+
+</main>
+
+<script>
+let SURVEY = [];
+let FITS = null;
+let X = [], Y = [], Z = [], IDX = [];
+let ready = false, my, mz, mc;
+const S = { yx: 'lin', zy: 'log' };
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const sup = n => String(n).replace(/-/g, '⁻').replace(/\d/g, d => SUP[d]);
+function fmt(v, s = 4) {
+  if (!isFinite(v)) return '—';
+  if (v === 0) return '0';
+  const a = Math.abs(v);
+  let out;
+  if (a < 1e-3 || a >= 1e7) {
+    const [m, e] = v.toExponential(s - 1).split('e');
+    out = parseFloat(m) + '×10' + sup(parseInt(e, 10));
+  } else out = String(parseFloat(v.toPrecision(s)));
+  return out.replace('-', '−');
+}
+const sg = v => (v < 0 ? '−' : '+');
+const ab = Math.abs;
+const r3 = v => (Number.isFinite(v) ? v.toFixed(3) : '—');
+const pct = v => (Number.isFinite(v) ? (v * 100).toFixed(1) + ' %' : '—');
+
+/* ---------- modelos (los coeficientes los calcula Python) ---------- */
+// y(x): galería según fotos y videos
+function modelYX(kind) {
+  const p = FITS.yx[kind];
+  if (kind === 'lin') {
+    const { a, b } = p, f = x => a + b * x;
+    return { kind, f, expr: v => `${fmt(a)} ${sg(b)} ${fmt(ab(b))}·${v}`, r2: p.r2, domain: 'todo x' };
+  }
+  const { c0, c1, c2 } = p, f = x => c0 + c1 * x + c2 * x * x;
+  return { kind, f, expr: v => `${fmt(c2)}·${v}² ${sg(c1)} ${fmt(ab(c1))}·${v} ${sg(c0)} ${fmt(ab(c0))}`, r2: p.r2, domain: 'todo x' };
+}
+// z(y): almacenamiento total según galería
+function modelZY(kind) {
+  const p = FITS.zy[kind];
+  if (kind === 'exp') {
+    const { A, k } = p, f = y => A * Math.exp(k * y);
+    return {
+      kind, f, domain: 'todo y',
+      expr: (v, cx) => `${fmt(A)}·e^(${fmt(k)}·${cx ? '(' + v + ')' : v})`,
+      r2: p.r2, r2note: 'sobre ln(z)', r2real: p.r2_real
+    };
+  }
+  const { a, b } = p, f = y => (y > 0 ? a + b * Math.log(y) : NaN);
+  return { kind, f, domain: 'y > 0', expr: v => `${fmt(a)} ${sg(b)} ${fmt(ab(b))}·ln(${v})`, r2: p.r2 };
+}
+function build() {
+  my = modelYX(S.yx); mz = modelZY(S.zy);
+  const f = x => mz.f(my.f(x));
+  mc = { f, r2: FITS.comp[S.yx + '_' + S.zy], eq: 'z(x) = ' + mz.expr(my.expr('x'), true) };
+  X = SURVEY.map(r => r[0]); Y = SURVEY.map(r => r[1]); Z = SURVEY.map(r => r[2]);
+  IDX = SURVEY.map((_, i) => i);
+  ready = true;
+}
+
+/* ---------- gráficos ---------- */
+function axis(dmax, n) {
+  const raw = dmax / n, p = 10 ** Math.floor(Math.log10(raw)), m = raw / p;
+  const step = ([1, 2, 2.5, 5, 10].find(c => c >= m)) * p;
+  const top = Math.ceil((dmax * 1.03) / step - 1e-9) * step;
+  const ticks = [];
+  for (let v = 0; v <= top + 1e-9; v += step) ticks.push(+v.toFixed(10));
+  return { ticks, top };
+}
+const charts = {};
+function chart(id, o) { charts[id] = o; draw(id); }
+function draw(id) {
+  const o = charts[id], host = document.getElementById(id);
+  if (!o || !host) return;
+  const w = host.clientWidth;
+  if (!w) return;
+  const h = Math.round(Math.min(380, Math.max(250, w * 0.66)));
+  const m = { l: 54, r: 14, t: 12, b: 44 };
+  const pw = w - m.l - m.r, ph = h - m.t - m.b;
+  const ax = axis(Math.max(...o.xs), w < 480 ? 4 : 6), ay = axis(Math.max(...o.ys), 5);
+  const sx = v => m.l + (v / ax.top) * pw, sy = v => m.t + ph - (v / ay.top) * ph;
+  let d = '';
+  const c0 = o.start;
+  for (let i = 0, pen = false; i <= 200; i++) {
+    const xv = c0 + (i / 200) * (ax.top - c0), yv = o.f(xv);
+    if (!isFinite(yv)) { pen = false; continue; }
+    d += (pen ? 'L' : 'M') + sx(xv).toFixed(1) + ' ' + sy(yv).toFixed(1);
+    pen = true;
+  }
+  const cid = 'clip-' + id;
+  const grid = ay.ticks.map(v => `<line class="grid" x1="${m.l}" x2="${w - m.r}" y1="${sy(v)}" y2="${sy(v)}"/><text x="${m.l - 8}" y="${sy(v) + 4}" text-anchor="end">${v}</text>`).join('');
+  const xl = ax.ticks.map(v => `<text x="${sx(v)}" y="${m.t + ph + 18}" text-anchor="${v === 0 ? 'start' : (v === ax.top ? 'end' : 'middle')}">${v}</text>`).join('');
+  const pts = o.xs.map((xv, i) => `<circle class="pt" data-i="${i}" cx="${sx(xv).toFixed(1)}" cy="${sy(o.ys[i]).toFixed(1)}" r="5"/>`).join('');
+  host.innerHTML = `<svg width="${w}" height="${h}" role="img" aria-label="${o.aria}">
+    <defs><clipPath id="${cid}"><rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}"/></clipPath></defs>
+    ${grid}<line class="base" x1="${m.l}" x2="${w - m.r}" y1="${m.t + ph}" y2="${m.t + ph}"/>${xl}
+    <text class="axis-title" x="${m.l + pw / 2}" y="${h - 6}" text-anchor="middle">${o.xt}</text>
+    <text class="axis-title" transform="translate(13 ${m.t + ph / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>
+    <path class="curve" clip-path="url(#${cid})" d="${d}"/>${pts}</svg><div class="tip" hidden></div>`;
+  const tip = host.querySelector('.tip'), svg = host.querySelector('svg');
+  const show = e => {
+    const r = svg.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    let best = -1, bd = 22;
+    o.xs.forEach((xv, i) => { const dd = Math.hypot(sx(xv) - px, sy(o.ys[i]) - py); if (dd < bd) { bd = dd; best = i; } });
+    svg.querySelectorAll('.pt.on').forEach(c => c.classList.remove('on'));
+    if (best < 0) { tip.hidden = true; return; }
+    svg.querySelector(`.pt[data-i="${best}"]`).classList.add('on');
+    tip.innerHTML = o.tip(best);
+    tip.hidden = false;
+    const tx = Math.min(Math.max(sx(o.xs[best]), 90), w - 90);
+    tip.style.left = tx + 'px'; tip.style.top = (sy(o.ys[best]) - 12) + 'px';
+  };
+  svg.addEventListener('pointermove', show);
+  svg.addEventListener('pointerdown', show);
+  svg.addEventListener('pointerleave', () => { tip.hidden = true; svg.querySelectorAll('.pt.on').forEach(c => c.classList.remove('on')); });
+}
+const ro = new ResizeObserver(entries => entries.forEach(en => { if (charts[en.target.id]) draw(en.target.id); }));
+
+/* ---------- vista: datos ---------- */
+function renderTable() {
+  $('#tbl tbody').innerHTML = SURVEY.map((r, i) =>
+    `<tr><td>${i + 1}</td><td>${r[0]}</td><td>${r[1].toFixed(2)}</td><td>${r[2].toFixed(2)}</td></tr>`).join('');
+}
+
+/* ---------- vista: modelos ---------- */
+function renderModelos() {
+  if (!ready) return;
+  document.querySelectorAll('.seg button[data-m]').forEach(b => b.setAttribute('aria-pressed', String(S[b.dataset.m] === b.dataset.k)));
+  $('#eq-yx').textContent = 'y(x) = ' + my.expr('x');
+  $('#eq-zy').textContent = 'z(y) = ' + mz.expr('y');
+  $('#eq-zx').textContent = mc.eq;
+  $('#facts-yx').innerHTML = `<span>R² = <b>${r3(my.r2)}</b></span><span>explica <b>${pct(my.r2)}</b> de la variación</span><span>derivable en <b>${my.domain}</b></span>`;
+  $('#facts-zy').innerHTML = `<span>R² = <b>${r3(mz.r2)}</b>${mz.r2note ? ' ' + mz.r2note : ''}</span>${mz.r2real !== undefined ? `<span>R² en z real = <b>${r3(mz.r2real)}</b></span>` : `<span>explica <b>${pct(mz.r2)}</b> de la variación</span>`}<span>derivable en <b>${mz.domain}</b></span>`;
+  $('#facts-zx').innerHTML = `<span>R² en z real = <b>${r3(mc.r2)}</b></span><span>derivable cuando <b>y(x) &gt; 0</b></span>`;
+  const n = i => IDX[i] + 1;
+  chart('ch-yx', {
+    xs: X, ys: Y, f: my.f, start: 0, xt: 'x · fotos y videos (unid.)', yt: 'y · galería (GB)',
+    aria: 'Dispersión de la galería contra la cantidad de fotos y videos, con la curva del modelo',
+    tip: i => `Obs. ${n(i)}<br>x = ${X[i]} unid.<br>y = ${Y[i].toFixed(2)} GB`
+  });
+  chart('ch-zy', {
+    xs: Y, ys: Z, f: mz.f, start: 0.05, xt: 'y · galería (GB)', yt: 'z · total usado (GB)',
+    aria: 'Dispersión del almacenamiento total usado contra el espacio de la galería, con la curva del modelo',
+    tip: i => `Obs. ${n(i)}<br>y = ${Y[i].toFixed(2)} GB<br>z = ${Z[i].toFixed(2)} GB`
+  });
+  chart('ch-zx', {
+    xs: X, ys: Z, f: mc.f, start: 0, xt: 'x · fotos y videos (unid.)', yt: 'z · total usado (GB)',
+    aria: 'Dispersión del almacenamiento total usado contra la cantidad de fotos y videos, con la curva compuesta',
+    tip: i => `Obs. ${n(i)}<br>x = ${X[i]} unid.<br>z = ${Z[i].toFixed(2)} GB`
+  });
+}
+
+/* ---------- pestañas y eventos ---------- */
+const TABS = ['datos', 'modelos'];
+function showTab(id) {
+  if (!TABS.includes(id)) id = 'datos';
+  TABS.forEach(t => {
+    $('#panel-' + t).hidden = t !== id;
+    $('#tab-' + t).setAttribute('aria-selected', String(t === id));
+  });
+  if (id === 'modelos') renderModelos();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => { location.hash = b.dataset.tab; }));
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+document.querySelectorAll('.seg button[data-m]').forEach(b => b.addEventListener('click', () => {
+  S[b.dataset.m] = b.dataset.k; build(); renderModelos();
+}));
+
+async function iniciar() {
+  try {
+    if (window.GALERIA) {
+      // Versión Streamlit: Python entrega los datos dentro de la propia página
+      SURVEY = window.GALERIA.datos.filas; FITS = window.GALERIA.ajustes;
+    } else {
+      // App de escritorio: la página le pide los datos a Python
+      const [d, f] = await Promise.all([
+        fetch('/api/datos').then(r => r.json()),
+        fetch('/api/ajustes').then(r => r.json())
+      ]);
+      SURVEY = d.filas; FITS = f;
+    }
+  } catch (e) {
+    $('main').innerHTML = '<div class="card"><p class="warn">No se pudo conectar con Python.</p><p class="note">Abre la app con iniciar.bat, ejecutando app.py o desde el link de Streamlit.</p></div>';
+    return;
+  }
+  renderTable(); build(); renderModelos();
+  ['ch-yx', 'ch-zy', 'ch-zx'].forEach(id => ro.observe(document.getElementById(id)));
+  showTab(location.hash.slice(1));
+}
+iniciar();
+</script>
+</body>
+</html>

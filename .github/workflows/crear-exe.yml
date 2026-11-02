@@ -1,0 +1,29 @@
+name: Crear exe de Windows
+
+# Se ejecuta solo al subir archivos, y también a mano desde la pestaña Actions (botón "Run workflow")
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar librerías
+        run: pip install numpy pywebview pyinstaller
+
+      - name: Crear Galeria.exe
+        run: pyinstaller --noconfirm --onefile --windowed --name Galeria --collect-all webview --add-data "web;web" --add-data "datos.csv;." app.py
+
+      - name: Guardar el exe para descargarlo
+        uses: actions/upload-artifact@v4
+        with:
+          name: Galeria-exe
+          path: dist/Galeria.exe
