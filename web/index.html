@@ -52,9 +52,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 p { margin: 0; }
 
 .band { background: var(--band); border-bottom: 4px solid var(--accent); }
-.band .wrap { padding-block: 26px 22px; }
-h1 { font-size: clamp(25px, 6.4vw, 36px); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; color: var(--band-ink); text-wrap: balance; }
-.sub { color: var(--band-ink-2); max-width: 60ch; }
+.band .wrap { padding-block: 26px; }
+h1 { font-size: clamp(25px, 6.4vw, 36px); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin: 0; color: var(--band-ink); text-wrap: balance; }
 
 nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
 nav.tabs .wrap { display: flex; gap: 4px; }
@@ -116,14 +115,12 @@ tbody td:first-child { font-size: 13px; }
 .chart .pt.on { stroke: var(--ink); }
 .chart .curve { fill: none; stroke: var(--s2); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); border-radius: 6px; padding: 6px 9px; font: 12px/1.35 var(--font-mono); white-space: nowrap; z-index: 3; transform: translate(-50%, -100%); }
-footer { color: var(--muted); font-size: 12.5px; }
 </style>
 </head>
 <body>
 
 <header class="band"><div class="wrap">
   <h1>Almacenamiento del celular según fotos y videos</h1>
-  <p class="sub">Más fotos y videos, más GB en la galería y más memoria usada en el celular.</p>
 </div></header>
 
 <nav class="tabs" aria-label="Secciones"><div class="wrap" role="tablist">
@@ -184,7 +181,6 @@ footer { color: var(--muted); font-size: 12.5px; }
       <div class="eq" id="eq-zx"></div>
       <div class="chart" id="ch-zx"></div>
     </div>
-    <footer>Los coeficientes los calcula Python (NumPy) por mínimos cuadrados, igual que la línea de tendencia de Excel. La función compuesta z(y(x)) se obtiene reemplazando y(x) dentro de z(y).</footer>
   </div>
 </section>
 
@@ -216,13 +212,13 @@ const ab = Math.abs;
 
 /* ---------- modelos (los coeficientes los calcula Python) ---------- */
 // y(x): regresión lineal         y = a + b·x
-// z(y): regresión logarítmica    z = a + b·ln(y)
-// z(y(x)): función compuesta     z = a₂ + b₂·ln(a₁ + b₁·x)
+// z(y): regresión exponencial    z = A·e^(k·y)
+// z(y(x)): función compuesta     z = A·e^(k·(a + b·x))
 function build() {
-  const { a: a1, b: b1 } = FITS.yx, { a: a2, b: b2 } = FITS.zy;
-  my = { f: x => a1 + b1 * x, expr: v => `${fmt(a1)} ${sg(b1)} ${fmt(ab(b1))}·${v}` };
-  mz = { f: y => (y > 0 ? a2 + b2 * Math.log(y) : NaN), expr: v => `${fmt(a2)} ${sg(b2)} ${fmt(ab(b2))}·ln(${v})` };
-  mc = { f: x => mz.f(my.f(x)), eq: 'z(y(x)) = ' + mz.expr(my.expr('x')) };
+  const { a, b } = FITS.yx, { A, k } = FITS.zy;
+  my = { f: x => a + b * x, expr: v => `${fmt(a)} ${sg(b)} ${fmt(ab(b))}·${v}` };
+  mz = { f: y => A * Math.exp(k * y), expr: (v, cx) => `${fmt(A)}·e^(${fmt(k)}·${cx ? '(' + v + ')' : v})` };
+  mc = { f: x => mz.f(my.f(x)), eq: 'z(y(x)) = ' + mz.expr(my.expr('x'), true) };
   X = SURVEY.map(r => r[0]); Y = SURVEY.map(r => r[1]); Z = SURVEY.map(r => r[2]);
   ready = true;
 }
@@ -317,8 +313,8 @@ function renderModelos() {
     tip: i => `Dato ${i + 1}<br>x = ${X[i]} unid.<br>y = ${Y[i].toFixed(2)} GB`
   });
   chart('ch-zy', {
-    xs: Y, ys: Z, f: mz.f, start: 0.05, xt: 'y · ' + NOM_Y, yt: 'z · ' + NOM_Z,
-    aria: 'Dispersión del espacio total usado contra el espacio ocupado por la galería, con la curva logarítmica',
+    xs: Y, ys: Z, f: mz.f, start: 0, xt: 'y · ' + NOM_Y, yt: 'z · ' + NOM_Z,
+    aria: 'Dispersión del espacio total usado contra el espacio ocupado por la galería, con la curva exponencial',
     tip: i => `Dato ${i + 1}<br>y = ${Y[i].toFixed(2)} GB<br>z = ${Z[i].toFixed(2)} GB`
   });
   chart('ch-zx', {

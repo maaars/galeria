@@ -10,9 +10,9 @@ Variables:
   2. ajustar():     calcula con numpy las dos regresiones por mínimos cuadrados,
                     igual que la línea de tendencia de Excel
         y(x): regresión lineal         y = a + b·x
-        z(y): regresión logarítmica    z = a + b·ln(y)
+        z(y): regresión exponencial    z = A·e^(k·y)
      La función compuesta z(y(x)) se arma reemplazando y(x) dentro de z(y):
-        z(y(x)) = a₂ + b₂·ln(a₁ + b₁·x)
+        z(y(x)) = A·e^(k·(a + b·x))
 """
 import csv
 import sys
@@ -44,12 +44,13 @@ def numero(v):
 def ajustar(filas):
     x, y, z = (np.array(c, float) for c in zip(*filas))
 
-    # y(x): regresión lineal           y = a1 + b1·x
-    b1, a1 = np.polyfit(x, y, 1)
-    # z(y): regresión logarítmica      z = a2 + b2·ln(y)   (recta en ln y)
-    b2, a2 = np.polyfit(np.log(y), z, 1)
+    # y(x): regresión lineal           y = a + b·x
+    b, a = np.polyfit(x, y, 1)
+    # z(y): regresión exponencial      z = A·e^(k·y)
+    # Igual que Excel: se toma ln(z) y queda una recta  ln z = ln A + k·y
+    k, ln_A = np.polyfit(y, np.log(z), 1)
 
     return {
-        "yx": {"a": numero(a1), "b": numero(b1)},
-        "zy": {"a": numero(a2), "b": numero(b2)},
+        "yx": {"a": numero(a), "b": numero(b)},
+        "zy": {"A": numero(np.exp(ln_A)), "k": numero(k)},
     }

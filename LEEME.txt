@@ -47,9 +47,10 @@ QUÉ HAY EN LA CARPETA
 
 QUÉ CALCULA PYTHON (calculos.py)
   y(x)    regresión lineal         y = a + b·x       con np.polyfit (mínimos cuadrados)
-  z(y)    regresión logarítmica    z = a + b·ln(y)   (es una recta en ln y, también con np.polyfit)
+  z(y)    regresión exponencial    z = A·e^(k·y)     (se toma ln z y queda una recta, con np.polyfit;
+                                                      igual que la línea de tendencia exponencial de Excel)
   z(y(x)) la función compuesta: se reemplaza y(x) dentro de z(y)
-          z(y(x)) = a₂ + b₂·ln(a₁ + b₁·x)
+          z(y(x)) = A·e^(k·(a + b·x))
 
 VARIABLES
   x = número total de fotos y videos almacenados en el celular (unidades)

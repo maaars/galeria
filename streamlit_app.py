@@ -9,6 +9,7 @@ Para probarla en tu computadora:   streamlit run streamlit_app.py
 Para publicarla:                   ver PUBLICAR.txt
 """
 import base64
+import hashlib
 import json
 import re
 
@@ -37,9 +38,19 @@ st.markdown(
 )
 
 
+def huella():
+    """Código que cambia cuando cambia la interfaz, los datos o los cálculos.
+    Sirve para que la página guardada en memoria se rehaga sola después de cada actualización."""
+    h = hashlib.sha256()
+    for archivo in (WEB / "index.html", CARPETA / "datos.csv", CARPETA / "calculos.py"):
+        h.update(archivo.read_bytes())
+    return h.hexdigest()
+
+
 @st.cache_data
-def construir_pagina():
-    """Arma el HTML final: interfaz + fuentes + datos y ajustes calculados por Python."""
+def construir_pagina(version):
+    """Arma el HTML final: interfaz + fuentes + datos y ajustes calculados por Python.
+    (`version` no se usa dentro: solo hace que se rehaga cuando cambia algún archivo.)"""
     html = (WEB / "index.html").read_text(encoding="utf-8")
 
     # Las letras se incrustan dentro del HTML, para que se vean sin archivos aparte
@@ -56,4 +67,4 @@ def construir_pagina():
     return html.replace("</head>", f"<script>window.GALERIA = {carga};</script>\n</head>", 1)
 
 
-components.html(construir_pagina(), height=900, scrolling=True)
+components.html(construir_pagina(huella()), height=900, scrolling=True)
